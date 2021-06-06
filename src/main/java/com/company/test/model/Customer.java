@@ -38,11 +38,22 @@ public class Customer implements Persistable<String> {
     private String phoneNumber;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "CUSTOMER_ID")
+    @JoinColumn(name = "CUSTOMER_ID", insertable = true, nullable = true)
     private Set<Owner> owners;
 
     @Override
     public boolean isNew() {
         return true;
+    }
+
+    public void addOrUpdate(Set<Owner> owners) {
+        if (owners == null && getOwners() == null) {
+            return;
+        } else if (getOwners() != null && owners != null) {
+            getOwners().clear();
+            getOwners().addAll(owners);
+        } else {
+            setOwners(owners);
+        }
     }
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class CreateOwnerRequest {
+public class OwnerRequest {
 
     private String name;
 

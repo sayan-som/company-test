@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.company.test.utility.CustomerUtility.cleanUp;
+
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
@@ -17,34 +19,39 @@ public class CustomerController {
     private CustomerService service;
 
     @PostMapping
-    ResponseEntity<CustomerResponse> createCustomer(@RequestBody CreateCustomerRequest request) {
+    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody CustomerRequest request) {
         CustomerResponse response = service.createCustomer(request);
+        cleanUp();
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
-    ResponseEntity<List<CustomerResponse>> getCustomers() {
+    public ResponseEntity<List<CustomerResponse>> getCustomers() {
         List<CustomerResponse> responses = service.getCustomers();
+        cleanUp();
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<?> getCustomer(@PathVariable("id") String id) {
+    public ResponseEntity<?> getCustomer(@PathVariable("id") String id) {
         CustomerResponse response = service.getCustomer(id);
+        cleanUp();
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<CustomerResponse> updateOwner(@PathVariable("id") String id, @RequestBody CreateOwnerRequest request) {
+    public ResponseEntity<CustomerResponse> updateOwner(@PathVariable("id") String id, @RequestBody OwnerRequest request) {
         CustomerResponse response = service.addUpdate(id, request);
+        cleanUp();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/validate")
-    ResponseEntity<SocialSecurityResponse> validateSSN(@RequestBody SocialSecurityRequest request) {
-
-        return ResponseEntity.ok(SocialSecurityResponse.builder()
+    public ResponseEntity<SocialSecurityResponse> createCustomer(@RequestBody SocialSecurityRequest request) {
+        SocialSecurityResponse response = SocialSecurityResponse.builder()
                 .valid(service.validateSSN(request.getSocialSecurityNumber()))
-        .build());
+                .build();
+        cleanUp();
+        return ResponseEntity.ok(response);
     }
 }

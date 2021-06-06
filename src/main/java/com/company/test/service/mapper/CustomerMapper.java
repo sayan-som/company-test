@@ -1,23 +1,21 @@
 package com.company.test.service.mapper;
 
+import com.company.test.utility.CustomerUtility;
 import com.company.test.model.Customer;
 import com.company.test.model.Owner;
-import com.company.test.resource.CreateCustomerRequest;
-import com.company.test.resource.CreateOwnerRequest;
+import com.company.test.resource.CustomerRequest;
+import com.company.test.resource.OwnerRequest;
 import com.company.test.resource.CustomerResponse;
 import com.company.test.resource.OwnerResponse;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class CustomerMapper {
 
-    public Customer prepareEntity(CreateCustomerRequest request, String newSequence) {
+    public Customer prepareEntity(CustomerRequest request, String newSequence) {
         return Customer.builder()
                 .id(newSequence)
                 .name(request.getName())
@@ -27,7 +25,7 @@ public class CustomerMapper {
                 .build();
     }
 
-    private Set<Owner> prepareEntity(Set<CreateOwnerRequest> owners, String customerId) {
+    private Set<Owner> prepareEntity(Set<OwnerRequest> owners, String customerId) {
         return owners.stream().map(o -> {
             return Owner.builder()
                     .customerId(customerId)
@@ -37,7 +35,16 @@ public class CustomerMapper {
         }).collect(Collectors.toSet());
     }
 
-    public Set<Owner> appendOwnerEntity(Set<Owner> owners, CreateOwnerRequest request, String id) {
+    public Customer updateCustomerEntity(Customer customer, CustomerRequest request, String id) {
+        customer.setName(request.getName());
+        customer.setCountry(request.getCountry());
+        customer.setPhoneNumber(request.getPhoneNumber());
+        Set<Owner> owners = prepareEntity(request.getOwners(),id);
+        customer.addOrUpdate(owners);
+        return customer;
+    }
+
+    public Set<Owner> appendOwnerEntity(Set<Owner> owners, OwnerRequest request, String id) {
         owners.addAll(prepareEntity(Set.of(request),id));
         return owners;
     }
@@ -54,10 +61,11 @@ public class CustomerMapper {
     }
 
     private Set<OwnerResponse> prepareResponse(Set<Owner> owners) {
+        Boolean flag = CustomerUtility.hasWriteRights();
         return owners.stream().map(o -> {
             return OwnerResponse.builder()
                     .name(o.getName())
-                    .socialSecurityNumber(o.getSocialSecurityNumber())
+                    .socialSecurityNumber(flag ? o.getSocialSecurityNumber() : null)
                     .build();
         }).collect(Collectors.toSet());
     }
@@ -69,5 +77,4 @@ public class CustomerMapper {
         }
         return responses;
     }
-
 }

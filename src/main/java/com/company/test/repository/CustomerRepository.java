@@ -1,7 +1,7 @@
 package com.company.test.repository;
 
 import com.company.test.model.Customer;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomerRepository extends CrudRepository<Customer, String> {
+public interface CustomerRepository extends JpaRepository<Customer, String> {
 }

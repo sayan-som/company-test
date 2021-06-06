@@ -14,8 +14,7 @@ public class SSNValidator {
 
     private List<Function<String, Boolean>> validator = Arrays.asList(
             s -> s.length() == 16 ? true : false,
-            s -> Pattern.matches("[a-zA-Z0-9]", s)
-    );
+            s -> Pattern.matches("[a-zA-Z0-9]{16}", s));
 
     public Boolean validate(String socialSecurityNumber) {
         return validator.stream().allMatch(v -> v.apply(socialSecurityNumber));

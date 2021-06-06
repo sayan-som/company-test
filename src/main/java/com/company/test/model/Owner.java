@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Persistable;
 
 import javax.persistence.*;
+import java.util.Comparator;
 
 @Entity
 @Builder
@@ -15,7 +17,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"customerId", "name", "socialSecurityNumber"})
 @IdClass(OwnerPK.class)
-public class Owner implements Persistable<OwnerPK> {
+public class Owner implements Persistable<OwnerPK>, Comparable<Owner>{
 
     public Owner() {
     }
@@ -44,5 +46,13 @@ public class Owner implements Persistable<OwnerPK> {
     @Override
     public boolean isNew() {
         return true;
+    }
+
+    @Override
+    public int compareTo(@NotNull Owner owner) {
+        return Comparator.comparing(Owner::getCustomerId)
+                .thenComparing(Owner::getName)
+                .thenComparing(Owner::getSocialSecurityNumber)
+                .compare(this, owner);
     }
 }

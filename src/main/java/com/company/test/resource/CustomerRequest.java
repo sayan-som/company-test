@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Data
 @Builder
-public class CreateCustomerRequest {
+public class CustomerRequest {
 
     private String id;
 
@@ -17,5 +17,5 @@ public class CreateCustomerRequest {
 
     private String phoneNumber;
 
-    private Set<CreateOwnerRequest> owners;
+    private Set<OwnerRequest> owners;
 }
