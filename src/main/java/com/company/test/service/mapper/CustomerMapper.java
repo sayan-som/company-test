@@ -1,15 +1,18 @@
 package com.company.test.service.mapper;
 
-import com.company.test.utility.CustomerUtility;
 import com.company.test.model.Customer;
 import com.company.test.model.Owner;
 import com.company.test.resource.CustomerRequest;
-import com.company.test.resource.OwnerRequest;
 import com.company.test.resource.CustomerResponse;
+import com.company.test.resource.OwnerRequest;
 import com.company.test.resource.OwnerResponse;
+import com.company.test.utility.CustomerUtility;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,15 +36,6 @@ public class CustomerMapper {
                     .socialSecurityNumber(o.getSocialSecurityNumber())
                     .build();
         }).collect(Collectors.toSet());
-    }
-
-    public Customer updateCustomerEntity(Customer customer, CustomerRequest request, String id) {
-        customer.setName(request.getName());
-        customer.setCountry(request.getCountry());
-        customer.setPhoneNumber(request.getPhoneNumber());
-        Set<Owner> owners = prepareEntity(request.getOwners(),id);
-        customer.addOrUpdate(owners);
-        return customer;
     }
 
     public Set<Owner> appendOwnerEntity(Set<Owner> owners, OwnerRequest request, String id) {

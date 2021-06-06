@@ -1,13 +1,13 @@
 package com.company.test.service;
 
 import com.company.test.exception.CustomerNotFoundException;
-import com.company.test.service.mapper.CustomerMapper;
 import com.company.test.model.Customer;
 import com.company.test.model.Owner;
 import com.company.test.repository.CustomerRepository;
 import com.company.test.resource.CustomerRequest;
-import com.company.test.resource.OwnerRequest;
 import com.company.test.resource.CustomerResponse;
+import com.company.test.resource.OwnerRequest;
+import com.company.test.service.mapper.CustomerMapper;
 import com.company.test.validator.SSNValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +57,6 @@ public class CustomerService {
         log.debug("Finding Customers by Id : {}", id);
 
         Customer customer = repository.findById(id).orElseThrow(() -> new CustomerNotFoundException());
-        return mapper.prepareResponse(customer);
-    }
-
-    public CustomerResponse addUpdate(String id, CustomerRequest request) {
-
-        Customer customer = repository.findById(id).orElseThrow(() -> new CustomerNotFoundException());
-        mapper.updateCustomerEntity(customer, request, id);
-        repository.save(customer);
-
         return mapper.prepareResponse(customer);
     }
 

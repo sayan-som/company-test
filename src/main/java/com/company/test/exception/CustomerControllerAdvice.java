@@ -1,15 +1,31 @@
 package com.company.test.exception;
 
-import com.company.test.exception.CustomerNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.company.test.utility.CustomerUtility.cleanUp;
+
 @ControllerAdvice
 public class CustomerControllerAdvice {
 
+    private static final Map<String, String> ERROR_MAP = new HashMap<>() {{
+        put("message", "Something went wrong");
+    }};
+
     @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity getErrorResponse() {
+    public ResponseEntity getCustomerNotFoundExceptionResponse() {
+        cleanUp();
         return ResponseEntity.notFound().build();
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity getExceptionResponse() {
+        cleanUp();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ERROR_MAP);
     }
 }
