@@ -8,11 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.company.test.utility.CustomerUtility.cleanUp;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/customers")
 public class CustomerController {
 
     @Autowired
@@ -40,10 +41,23 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateOwner(@PathVariable("id") String id, @RequestBody OwnerRequest request) {
-        CustomerResponse response = service.addUpdate(id, request);
+    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable("id") String id, @RequestBody CustomerRequest request) {
+        CustomerResponse response = service.updateCustomer(id, request);
         cleanUp();
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}/owner")
+    public ResponseEntity<CustomerResponse> updateOwner(@PathVariable("id") String id, @RequestBody Set<OwnerRequest> request) {
+        CustomerResponse response = service.updateOwner(request, id);
+        cleanUp();
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteCustomer(@PathVariable("id") String id) {
+        service.deleteCustomer(id);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/validate")

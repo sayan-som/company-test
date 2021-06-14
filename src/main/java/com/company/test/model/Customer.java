@@ -37,13 +37,20 @@ public class Customer implements Persistable<String> {
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
+    @Column(name = "VERSION")
+    private Long version;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "CUSTOMER_ID", insertable = true, nullable = true)
+    @JoinColumn(name = "CUSTOMER_ID", insertable = false, nullable = false, updatable = false)
     private Set<Owner> owners;
 
     @Override
     public boolean isNew() {
-        return true;
+        return 0L == version;
+    }
+
+    public void incrementVersion() {
+        this.version += 1;
     }
 
     public void addOrUpdate(Set<Owner> owners) {

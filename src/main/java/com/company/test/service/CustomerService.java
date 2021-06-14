@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -38,7 +37,7 @@ public class CustomerService {
     public CustomerResponse createCustomer(CustomerRequest request) {
         String newSequence = sequenceGenerator.getSequence();
 
-        Customer customer = mapper.prepareEntity(request, newSequence);
+        Customer customer = mapper.createCustomer(request, newSequence);
         log.debug("Creating Customer : {} ", customer);
 
         repository.save(customer);
@@ -60,24 +59,33 @@ public class CustomerService {
         return mapper.prepareResponse(customer);
     }
 
-    public CustomerResponse addUpdate(String id, OwnerRequest request) {
+    public CustomerResponse updateCustomer(String id, CustomerRequest request) {
 
         Customer customer = repository.findById(id).orElseThrow(() -> new CustomerNotFoundException());
-        mapper.appendOwnerEntity(customer.getOwners(), request, id);
+        mapper.updateCustomer(request, customer, id);
         repository.save(customer);
 
         return mapper.prepareResponse(customer);
     }
 
-    public Boolean validateSSN(String socialSecurityNumber) {
-        return validator.validate(socialSecurityNumber);
+    public CustomerResponse updateOwner(Set<OwnerRequest> requests, String id) {
+
+        Customer customer = repository.findById(id).orElseThrow(() -> new CustomerNotFoundException());
+        Set<Owner> owners = mapper.updateOwners(requests, id);
+        customer.getOwners().clear();
+        customer.getOwners().addAll(owners);
+
+        repository.save(customer);
+
+        return mapper.prepareResponse(customer);
     }
 
+    public void deleteCustomer(String id) {
+        Customer customer = repository.findById(id).orElseThrow(() -> new CustomerNotFoundException());
+        repository.delete(customer);
+    }
 
-    private Set<Owner> mapOwner(Set<OwnerRequest> requests, String id) {
-        return requests.stream().map(r -> Owner.builder()
-                        .customerId(id)
-                        .name(r.getName())
-                        .socialSecurityNumber(r.getSocialSecurityNumber()).build() ).collect(Collectors.toSet());
+    public Boolean validateSSN(String socialSecurityNumber) {
+        return validator.validate(socialSecurityNumber);
     }
 }

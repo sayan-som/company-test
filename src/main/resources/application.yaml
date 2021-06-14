@@ -24,3 +24,6 @@ logging:
   level:
     root: ERROR
     com.company.test: DEBUG
+
+whitelist:
+  url: /h2-console

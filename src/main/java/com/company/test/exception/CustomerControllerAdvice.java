@@ -13,8 +13,12 @@ import static com.company.test.utility.CustomerUtility.cleanUp;
 @ControllerAdvice
 public class CustomerControllerAdvice {
 
-    private static final Map<String, String> ERROR_MAP = new HashMap<>() {{
+    private static final Map<String, String> ERROR_MSG_MAP = new HashMap<>() {{
         put("message", "Something went wrong");
+    }};
+
+    private static final Map<String, Map> ERROR_MAP = new HashMap<>() {{
+        put("error", ERROR_MSG_MAP);
     }};
 
     @ExceptionHandler(CustomerNotFoundException.class)

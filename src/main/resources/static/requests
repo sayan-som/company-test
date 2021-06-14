@@ -1,0 +1,32 @@
+POST - create
+
+{
+    "id": "1001",
+    "name": "McKenzie",
+    "country": "IN",
+    "phoneNumber": "8971456134",
+    "owners": [
+        {
+            "name": "Mark Wallow",
+            "socialSecurityNumber": "wrtr1567qrty12ui"
+        },
+        {
+            "name": "Tim Watt",
+            "socialSecurityNumber": "wety76wty12iu81o"
+        }
+    ]
+}
+
+PUT - update
+
+{
+    "name": "McKenzie",
+    "country": "IN",
+    "phoneNumber": "8971456134",
+    "owners": [
+        {
+            "name": "Mark Wallow",
+            "socialSecurityNumber": "wrtr1567qrty12ui"
+        }
+    ]
+}

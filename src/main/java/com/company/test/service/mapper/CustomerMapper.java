@@ -7,6 +7,7 @@ import com.company.test.resource.CustomerResponse;
 import com.company.test.resource.OwnerRequest;
 import com.company.test.resource.OwnerResponse;
 import com.company.test.utility.CustomerUtility;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -18,17 +19,18 @@ import java.util.stream.Collectors;
 @Component
 public class CustomerMapper {
 
-    public Customer prepareEntity(CustomerRequest request, String newSequence) {
+    public Customer createCustomer(CustomerRequest request, String newSequence) {
         return Customer.builder()
                 .id(newSequence)
                 .name(request.getName())
                 .country(request.getCountry())
                 .phoneNumber(request.getPhoneNumber())
-                .owners(prepareEntity(request.getOwners(), newSequence))
+                .owners(createOwners(request.getOwners(), newSequence))
+                .version(0L)
                 .build();
     }
 
-    private Set<Owner> prepareEntity(Set<OwnerRequest> owners, String customerId) {
+    private Set<Owner> createOwners(Set<OwnerRequest> owners, String customerId) {
         return owners.stream().map(o -> {
             return Owner.builder()
                     .customerId(customerId)
@@ -38,11 +40,24 @@ public class CustomerMapper {
         }).collect(Collectors.toSet());
     }
 
-    public Set<Owner> appendOwnerEntity(Set<Owner> owners, OwnerRequest request, String id) {
-        owners.addAll(prepareEntity(Set.of(request),id));
-        return owners;
+    public Customer updateCustomer(CustomerRequest request, Customer customer, String id) {
+        BeanUtils.copyProperties(request, customer, "owners");
+        customer.setId(id);
+        customer.getOwners().clear();
+        customer.getOwners().addAll(updateOwners(request.getOwners(), id));
+        customer.incrementVersion();
+        return customer;
     }
 
+    public Set<Owner> updateOwners(Set<OwnerRequest> requests, String id) {
+        return requests.stream().map(o -> {
+            return Owner.builder()
+                    .customerId(id)
+                    .name(o.getName())
+                    .socialSecurityNumber(o.getSocialSecurityNumber())
+                    .build();
+        }).collect(Collectors.toSet());
+    }
 
     public CustomerResponse prepareResponse(Customer customer) {
         return CustomerResponse.builder()
